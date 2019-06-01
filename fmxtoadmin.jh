@@ -1,0 +1,88 @@
+
+entity Productor {
+	nombre String required,
+    email String,
+    celular Integer,
+    direccion String,
+    cuit String
+}
+
+entity Publicidad {
+	nombre String required,
+    inicio LocalDate,
+    fin LocalDate,
+    archivo String
+}
+
+entity Programa {
+	nombre String required,
+    inicio LocalDate,
+    fin LocalDate,
+    crontab String
+}
+
+entity Pago{
+	fecha LocalDate required,
+    monto BigDecimal required,
+    retirado LocalDate 
+}
+
+entity Emision{
+	fecha LocalDate required,
+    pagada Boolean,
+    ausencia Boolean
+}
+
+entity Tanda{
+    fecha LocalDate required,
+	pagada Boolean,
+    publicitada Boolean
+
+}
+
+entity Precio{
+	desde LocalDate,
+    hasta LocalDate,
+    costo BigDecimal required,
+    ganancia BigDecimal,
+    valor BigDecimal
+}
+
+entity Pauta{
+    desde LocalDate,
+    hasta LocalDate,
+    costo BigDecimal required,
+    reitera Integer
+}
+
+relationship OneToMany {
+	Productor{publicidad(nombre)} to Publicidad,
+	/**
+	* A relationship
+	*/
+	Productor{programa(nombre)} to Programa,
+
+    Productor{pago(fecha)} to Pago,
+
+    Programa{emision(fecha)} to Emision,
+
+    Publicidad{tanda(fecha)} to Tanda,
+
+    Precio{programa(nombre)} to Programa,
+
+    Pauta{publicidad(nombre)} to Publicidad
+
+}
+relationship ManyToMany {  
+
+	Tanda{pago(fecha)} to Pago{tanda(fecha)},
+
+	Emision{pago(fecha)} to Pago{emision(fecha)}
+
+}
+
+service Emision, Tanda with serviceClass 
+
+paginate Productor, Precio, Pauta with infinite-scroll
+paginate Publicidad, Programa, Pago, Emision, Tanda with pagination
+
